@@ -7,7 +7,7 @@
 #define LED 2
 #define RELAY 4
 #define ResetTime 30
-#define SerialDebug false
+#define SerialDebug true
 
 // Set your access point network credentials
 const char* ssid = "ESP32-Access-Point";
@@ -71,7 +71,7 @@ void setup(){
     [](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
       
       char msgRecived[30];
-      String msg;
+      String msg, msgExpected = "{\"RelayState\":true}";
       for (size_t i = 0; i < len; i++) {
         
         msgRecived[i] = data[i];
@@ -79,7 +79,7 @@ void setup(){
 
       msg = msgRecived;
 
-      if (msg == "{'RelayState':true}")
+      if (msg == msgExpected)
       {
         RelayState = true;
         if (SerialDebug)
@@ -90,7 +90,10 @@ void setup(){
       {
         if (SerialDebug)
         {
-          Serial.println(msgRecived);
+          Serial.print("Recived msg : ");
+          Serial.print(msgRecived);
+          Serial.print(" Is not equal msg pattern : ");
+          Serial.println(msgExpected);
         }
       }
  
